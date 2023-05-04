@@ -3,8 +3,12 @@ package co.edu.umanizales.tads.model;
 import co.edu.umanizales.tads.controller.dto.ReportKidLocationGenderDTO;
 import co.edu.umanizales.tads.exception.ListSEException;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
+@Getter
+@Setter
 public class ListSE {
     private Node head;
     private int size;
@@ -95,9 +99,9 @@ public class ListSE {
         return count;
     }
 
-    //Ejercicios Parcial
+    //Métodos Parcial
 
-    //Ejercicio 1
+    //Metodo 1
     //Invertir la lista
     public void invert() throws NullPointerException{
         if (this.head != null) {
@@ -114,7 +118,7 @@ public class ListSE {
         }
     }
 
-    //Ejercicio 2
+    //Metodo 2
     //Niños al inicio y niñas al final
     public void getorderBoysToStart() throws ListSEException {
         if (this.head != null) {
@@ -141,7 +145,7 @@ public class ListSE {
         }
     }
 
-    //Ejercicio 3
+    //Metodo 3
     //Intercalar niño, niña, niño, niña
     public void getAlternateKids() throws ListSEException {
         Node boys = head;
@@ -165,9 +169,12 @@ public class ListSE {
         }
     }
 
-    //Ejercicio 4
+    //Metodo 4
     //Dada una edad eliminar de la lista  a los niños de la edad dada
-    public void deleteKidbyAge(Node head, byte age) {
+    public void deleteKidbyAge(Node head, byte age) throws ListSEException {
+        if (age <= 0) {
+            throw new ListSEException ("La edad debe ser un valor positivo mayor que cero");
+        }
         Node temp = this.head;
         ListSE listSECp = new ListSE();
         while(temp!=null) {
@@ -179,7 +186,7 @@ public class ListSE {
         this.head = listSECp.getHead();
     }
 
-    //Ejercicio 5
+    //Metodo 5
     //Obtener el promedio de edad de los niños de la lista
     public int getLength()  {
         int count = 0;
@@ -207,7 +214,7 @@ public class ListSE {
         }
     }
 
-    //Ejercicio 6
+    //Metodo 6
     //Generar un reporte que me diga cuantos niños hay de cada ciudad
     public int getCountKidByLocationCode(String code) throws ListSEException {
         if (code == null || code.isEmpty()){
@@ -230,7 +237,7 @@ public class ListSE {
     }
 
 
-    //Ejercicio 7
+    //Metodo 7
     // Método que me permia defirirle a un niño determinado que adelante un número dado de posiciones
     public void MoveKid(String id, int posicion) {
         Node act = head;
@@ -265,7 +272,7 @@ public class ListSE {
         }
     }
 
-    //Ejercicio 8
+    //Metodo 8
     //Método que me permita decirle a un niño determinado que pierda un numero de posiciones dadas
     public int getPostById(String id) throws ListSEException {
         if (head == null) {
@@ -283,7 +290,7 @@ public class ListSE {
         return -1;
     }
 
-    //Ejercicio 9
+    //Metodo 9
     //Obtener un informe de niños por rango de edades
     public void ReportByAge(byte minAge, byte maxAge) throws ListSEException {
         Node current = head;
@@ -302,7 +309,7 @@ public class ListSE {
         }
     }
 
-    //Ejercicio 10
+    //Metodo 10
     //Implementar un método que me permita enviar al final de la lista a los niños que su nombre inicie con una letra dada
     public void moveKid(char letter) throws ListSEException {
         if (head == null) {

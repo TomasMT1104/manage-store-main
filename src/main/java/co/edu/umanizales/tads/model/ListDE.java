@@ -146,5 +146,12 @@ public class ListDE {
         }
     }
 
+    //Metodo 5
+    //Obetener el promedio de edad de las mascotas de la lista
+
+
+
+
+
 
 }

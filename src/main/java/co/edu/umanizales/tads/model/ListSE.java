@@ -120,30 +120,7 @@ public class ListSE {
 
     //Metodo 2
     //Niños al inicio y niñas al final
-    public void getorderBoysToStart() throws ListSEException {
-        if (this.head != null) {
-            ListSE listSE = new ListSE();
-            Node temp = this.head;
-            Node lastBoy = null;
-            while (temp != null) {
-                if (temp.getData().getGender() == 'M') {
-                    if (lastBoy != null) {
-                        listSE.addToStart(lastBoy.getData());
-                    }
-                    lastBoy = temp;
-                } else {
-                    listSE.add(temp.getData());
-                }
-                temp = temp.getNext();
-            }
-            if (lastBoy != null) {
-                listSE.addToStart(lastBoy.getData());
-            }
-            this.head = listSE.getHead();
-        } else {
-            throw new ListSEException("La lista está vacía");
-        }
-    }
+
 
     //Metodo 3
     //Intercalar niño, niña, niño, niña
@@ -238,7 +215,7 @@ public class ListSE {
 
 
     //Metodo 7
-    // Método que me permia defirirle a un niño determinado que adelante un número dado de posiciones
+    //Método que me permia defirirle a un niño determinado que adelante un número dado de posiciones
     public void MoveKid(String id, int posicion) {
         Node act = head;
         Node ant = null;

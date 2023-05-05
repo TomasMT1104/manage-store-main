@@ -33,4 +33,8 @@ public class NodeDE {
 
         public void setPrev(NodeDE males) {
         }
+
+    public NodeDE getPrev() {
+            return null;
+    }
 }

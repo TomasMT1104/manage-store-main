@@ -18,6 +18,10 @@ public class Pet {
 
     private String identification;
 
+    public Pet getData() {
+        return null;
+    }
+
     public Pet(String identification, String name, int sum) {
     }
 }

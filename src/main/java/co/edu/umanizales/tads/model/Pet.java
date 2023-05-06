@@ -18,6 +18,9 @@ public class Pet {
 
     private String identification;
 
+    public Pet(Object identification, Object name, Object age, Object gender, Object codeLocation) {
+    }
+
     public Pet getData() {
         return null;
     }

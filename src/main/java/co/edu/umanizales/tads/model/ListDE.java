@@ -333,7 +333,7 @@ public class ListDE {
                 }
                 current = current.getNext();
                 tail.setNext(null);
-                tail.setPrevious(last);
+                tail.setPrev(last);
             } else {
                 last = current;
                 current = current.getNext();

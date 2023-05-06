@@ -149,7 +149,8 @@ public class ListDE {
             tail.setPrev(tail.getPrevious().getPrevious());
         }
     }
-    
+
+
     //Metodo 5
     //Obtener el promedio de edad de las mascotas de la lista
     public int getLength() {
@@ -192,7 +193,7 @@ public class ListDE {
                 } else if (temp == this.tail) {
                     this.tail = temp.getPrevious();
                     if (this.tail != null) {
-                        this.tail.setNext(null);
+                        this.tail.getClass();
                     }
                 } else {
                     temp.getPrev().setNext(temp.getNext());

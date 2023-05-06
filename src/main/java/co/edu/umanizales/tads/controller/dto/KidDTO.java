@@ -9,4 +9,6 @@ public class KidDTO {
     private byte age;
     private char gender;
     private String codeLocation;
+
+
 }

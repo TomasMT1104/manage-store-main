@@ -215,7 +215,7 @@ public class ListSE {
 
 
     //Metodo 7
-    //Método que me permia defirirle a un niño determinado que adelante un número dado de posiciones
+    //Método que me permita defirirle a un niño determinado que adelante un número dado de posiciones
     public void MoveKid(String id, int posicion) {
         Node act = head;
         Node ant = null;

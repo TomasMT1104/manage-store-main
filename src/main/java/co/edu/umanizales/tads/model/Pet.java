@@ -18,6 +18,8 @@ public class Pet {
 
     private String identification;
 
+    private byte position;
+
     public Pet(Object identification, Object name, Object age, Object gender, Object codeLocation) {
     }
 

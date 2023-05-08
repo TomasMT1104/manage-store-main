@@ -10,10 +10,7 @@ import co.edu.umanizales.tads.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping
@@ -23,7 +20,7 @@ public class ListDEController {
     @Autowired
     private LocationService locationService;
 
-    @PostMapping(path = "/addpet")
+    @GetMapping (path = "/addpet")
     public ResponseEntity<ResponseDTO> addPet(@RequestBody PetDTO petDTO) throws ListDEException {
         Location location = locationService.getLocationByCode((String) PetDTO.getCodeLocation());
         if (location == null) {
@@ -39,5 +36,7 @@ public class ListDEController {
                 null), HttpStatus.OK);
 
     }
+
+
 
 }

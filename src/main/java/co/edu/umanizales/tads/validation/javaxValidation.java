@@ -1,4 +1,4 @@
-package co.edu.umanizales.tads.Validation;
+package co.edu.umanizales.tads.validation;
 
 import co.edu.umanizales.tads.controller.dto.ResponseDTO;
 import org.springframework.http.HttpStatus;

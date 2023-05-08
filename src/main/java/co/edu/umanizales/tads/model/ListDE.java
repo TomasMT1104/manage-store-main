@@ -126,11 +126,11 @@ public class ListDE {
 
     //Metodo 4
     //Dada una edad eliminar de la lista a las mascotas de la edad dada
-    public void deletePetbyAge(Node head, byte age) throws ListDEException {
+    public void deletePetbyAge( byte age) throws ListDEException {
         if (age <= 0) {
             throw new ListDEException("La edad debe ser un valor positivo mayor que cero");
         }
-        Node temp = head;
+        NodeDE temp = head;
         ListDE listDLECp = new ListDE();
         while (temp != null) {
             if (temp.getData().getAge() != age) {
@@ -341,20 +341,49 @@ public class ListDE {
         }
     }
 
+    // Método de eliminar camicase
+    // Sustentación 08/05/2023
 
+    /*
+    Creo la clase deletePetbyPosition para implementar el metodo.
+    Ahora creo las excepciones que en este caso serian si la cabeza ve que no tiene datos se retornaria que no hay datos,
+    y la otra sería que si la posicion dada es menor a 1 o es mayor a las mascotas que hay en la lista se retornaria que
+    no se puede eliminar a la mascota, ya que la posicion no es valida o no se encuetra la mascota.
 
+     */
 
+    public void deletePetbyIdentification(int identification) throws ListDEException {
+        if (head == null)
+            throw new ListDEException("La lista está vacia");
+    }
+    NodeDE temp = headDE;
+    NodeDE previousNode = null;
 
+           while (temp != null) {
+        String identification = null;
+        if (temp.getName().equals(identification)) {
+            if (previousNode != null) {
+                previousNode.setNext(temp.getNext());
+            } else {
+                headDE = temp.getNext();
+            }
 
+            if (temp.getNext() != null) {
+                temp.getNext().setPrevious(previousNode);
+            }
 
+            temp.setPrevious(null);
+            temp.setNext(null);
 
+            NodeDE temp = this.temp;
+            return temp;
+        }
 
+        previousNode = temp;
+        temp = temp.getNext();
+    }
 
-
-
-
-
-
-
-
+           return null;
 }
+
+

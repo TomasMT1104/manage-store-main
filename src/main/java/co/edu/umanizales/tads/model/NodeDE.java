@@ -31,10 +31,10 @@ public class NodeDE {
         }
 
 
-        public void setPrev(NodeDE males) {
+        public void setPrev(NodeDE previous) {
         }
 
     public NodeDE getPrev() {
-            return null;
+            return previous;
     }
 }

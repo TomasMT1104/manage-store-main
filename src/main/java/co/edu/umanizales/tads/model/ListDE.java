@@ -4,6 +4,7 @@ import co.edu.umanizales.tads.exception.ListDEException;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.w3c.dom.Node;
 
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class ListDE {
             throw new NullPointerException("Cabeza es nulo");
         }
     }
-    
+
     //Metodo 2 
     //Machos al inicio y Hembras al final
     public void getorderBoysToStart() throws ListDEException {
@@ -87,7 +88,7 @@ public class ListDE {
             this.head = listDoublyLinked.getHead();
             this.tail = listDoublyLinked.getTail();
         } else {
-            throw new ListDEException ("La lista está vacía");
+            throw new ListDEException("La lista está vacía");
         }
     }
 
@@ -126,7 +127,7 @@ public class ListDE {
 
     //Metodo 4
     //Dada una edad eliminar de la lista a las mascotas de la edad dada
-    public void deletePetbyAge( byte age) throws ListDEException {
+    public void deletePetbyAge(byte age) throws ListDEException {
         if (age <= 0) {
             throw new ListDEException("La edad debe ser un valor positivo mayor que cero");
         }
@@ -309,15 +310,15 @@ public class ListDE {
     //Metodo 10
     //Implementar un método que me permita enviar al final de la lista a las mascotas que su nombre inicie con una letra dada
     public void movePet(char letter) throws ListDEException {
-        if (head == null) {
+        if (headDE == null) {
             throw new ListDEException("La lista está vacía");
         }
-        NodeDE current = head;
+        NodeDE current = headDE;
         NodeDE last = null;
         while (current != null) {
             if (current.getData().getName().startsWith(String.valueOf(letter))) {
                 if (last == null) {
-                    head = current.getNext();
+                    headDE = current.getNext();
                 } else {
                     last.setNext(current.getNext());
                 }
@@ -345,45 +346,49 @@ public class ListDE {
     // Sustentación 08/05/2023
 
     /*
-    Creo la clase deletePetbyPosition para implementar el metodo.
+    Creo el  metodo deletePetbyIdentification para implementar el metodo.
     Ahora creo las excepciones que en este caso serian si la cabeza ve que no tiene datos se retornaria que no hay datos,
     y la otra sería que si la posicion dada es menor a 1 o es mayor a las mascotas que hay en la lista se retornaria que
     no se puede eliminar a la mascota, ya que la posicion no es valida o no se encuetra la mascota.
+    Luego empiezo a nombrar el NodeDE como temp que seria el nodo temporal, luego tendria que utilizar el getNext que seria
+    el nodo que buuscaria el temp hasta encontrar el nodo a elimina.
+    Acá es donde entraria la cabeza que con el uso del getNext y del getPrevious se buscaria el nodo correspodiente que se
+    quiere eliminar, para establecer la cabeza ahí, y así el return haría que se devuelva el nodo eliminado.git add
 
      */
 
-    public void deletePetbyIdentification(int identification) throws ListDEException {
-        if (head == null)
+    public void deletePetbyIdentification(String identification) throws ListDEException {
+        if (headDE == null) {
             throw new ListDEException("La lista está vacia");
-    }
-    NodeDE temp = headDE;
-    NodeDE previousNode = null;
+        }
+        NodeDE temp = headDE;
+        NodeDE previousNode = null;
 
-           while (temp != null) {
-        String identification = null;
-        if (temp.getName().equals(identification)) {
-            if (previousNode != null) {
-                previousNode.setNext(temp.getNext());
-            } else {
-                headDE = temp.getNext();
+        while (temp != null) {
+            temp = temp.getNext();
+            if (temp.getName().equals(identification)) {
+                if (previousNode != null) {
+                    previousNode.setNext(temp.getNext());
+                } else {
+                    headDE = temp.getNext();
+                }
+
+                if (temp.getNext() != null) {
+                    temp.getNext().setPrevious(previousNode);
+                }
+
+                temp.setPrevious(null);
+                temp.setNext(null);
+
+                return;
             }
 
-            if (temp.getNext() != null) {
-                temp.getNext().setPrevious(previousNode);
-            }
-
-            temp.setPrevious(null);
-            temp.setNext(null);
-
-            NodeDE temp = this.temp;
-            return temp;
+            previousNode = temp;
+            temp = temp.getNext();
         }
 
-        previousNode = temp;
-        temp = temp.getNext();
     }
 
-           return null;
 }
 
 

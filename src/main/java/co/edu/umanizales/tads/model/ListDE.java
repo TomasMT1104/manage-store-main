@@ -24,6 +24,10 @@ public class ListDE {
         return headDE;
     }
 
+    public Object print() {
+        return null;
+    }
+
     public void add(Pet pet) {
         if (headDE != null) {
             NodeDE temp = headDE;
@@ -66,24 +70,24 @@ public class ListDE {
 
     //Metodo 2 
     //Machos al inicio y Hembras al final
-    public void getorderBoysToStart() throws ListDEException {
+    public void getorderMalesToStart() throws ListDEException {
         if (this.head != null) {
             ListDE listDoublyLinked = new ListDE();
             NodeDE temp = this.head;
-            NodeDE lastBoy = null;
+            NodeDE lastMale = null;
             while (temp != null) {
                 if (temp.getData().getGender() == 'M') {
-                    if (lastBoy != null) {
-                        listDoublyLinked.addToStart(lastBoy.getData());
+                    if (lastMale != null) {
+                        listDoublyLinked.addToStart(lastMale.getData());
                     }
-                    lastBoy = temp;
+                    lastMale = temp;
                 } else {
                     listDoublyLinked.add(temp.getData());
                 }
                 temp = temp.getNext();
             }
-            if (lastBoy != null) {
-                listDoublyLinked.addToStart(lastBoy.getData());
+            if (lastMale != null) {
+                listDoublyLinked.addToStart(lastMale.getData());
             }
             this.head = listDoublyLinked.getHead();
             this.tail = listDoublyLinked.getTail();
@@ -353,7 +357,7 @@ public class ListDE {
     Luego empiezo a nombrar el NodeDE como temp que seria el nodo temporal, luego tendria que utilizar el getNext que seria
     el nodo que buuscaria el temp hasta encontrar el nodo a elimina.
     Acá es donde entraria la cabeza que con el uso del getNext y del getPrevious se buscaria el nodo correspodiente que se
-    quiere eliminar, para establecer la cabeza ahí, y así el return haría que se devuelva el nodo eliminado.git add
+    quiere eliminar, para establecer la cabeza ahí, y así el return haría que se devuelva el nodo eliminado
 
      */
 
@@ -388,6 +392,7 @@ public class ListDE {
         }
 
     }
+
 
 }
 

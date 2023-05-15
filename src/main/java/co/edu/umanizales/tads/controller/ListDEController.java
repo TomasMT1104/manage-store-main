@@ -1,18 +1,21 @@
 package co.edu.umanizales.tads.controller;
 
 import co.edu.umanizales.tads.controller.dto.PetDTO;
+import co.edu.umanizales.tads.controller.dto.PetsByLocationDTO;
 import co.edu.umanizales.tads.controller.dto.ResponseDTO;
 import co.edu.umanizales.tads.exception.ListDEException;
 import co.edu.umanizales.tads.model.Location;
 import co.edu.umanizales.tads.model.Pet;
 import co.edu.umanizales.tads.service.ListDEService;
 import co.edu.umanizales.tads.service.LocationService;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -138,6 +141,116 @@ public class ListDEController {
                     500, "Se produjo un error al calcular la edad promedio de las mascotas", null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @ExceptionHandler(value = ListDEException.class)
+    public ResponseEntity<Object> handleListSEException(ListDEException ex) {
+        try {
+            String errorMessage = "Error al generar un reporte de mascota/s por ciudad " + ex.getMessage();
+            return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error inesperado al manejar la excepción: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping(path = "/petsbylocation")
+    public ResponseEntity<ResponseDTO> getCountPetsByLocationCode() {
+        List<PetsByLocationDTO> petsByLocationDTOList = new ArrayList<>();
+        try {
+            for (Location location : locationService.getLocations()) {
+                int count = listDEService.getPets().getCountPetByLocationCode(location.getCode());
+                if (count > 0) {
+                    petsByLocationDTOList.add(new PetsByLocationDTO(location, count));
+                }
+            }
+            return new ResponseEntity<>(new ResponseDTO(
+                    200, petsByLocationDTOList,
+                    null), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @ExceptionHandler(value = {IndexOutOfBoundsException.class})
+    public ResponseEntity<String> handleIndexOutOfBoundsException(IndexOutOfBoundsException exception) {
+        try {
+            return new ResponseEntity<>("Se ha producido una excepción de índice fuera de rango", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IndexOutOfBoundsException exception2) {
+            return new ResponseEntity<>("Se ha producido un error al manejar la excepción de índice fuera de rango"+exception, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(path = "/winpositionpet/{id}/{position}")
+    public ResponseEntity<ResponseDTO> winPositionPet(String id, int position){
+        try {
+            listDEService.getPets().winPositionPet(id,position);
+            return new ResponseEntity<>(new ResponseDTO(
+                    200, "La mascota gano las posiciones en la lista especificadas", null)
+                    , HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseDTO(
+                    500, "Se produjo un error en ganar posiciones de la mascota en la lista",
+                    null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @ExceptionHandler(value = {NullPointerException.class})
+    public ResponseEntity<Object> handleNullPointerException(NullPointerException nullPointerException) {
+        try {
+            return new ResponseEntity<>("No se ha añadido el perro ", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NullPointerException pointerException) {
+            return new ResponseEntity<>("Tiene un error al pedir a la mascota/s perder el numero de posciciones", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping(path = "/losepositionpet/{id}/{positionpet}")
+    public ResponseEntity<ResponseDTO>losePositionPet(String id, int positionpet){
+        try {
+            listDEService.getPets().losePositionPet(id,positionpet);
+            return new ResponseEntity<>(new ResponseDTO(
+                    200, "La mascota perdio posiciones en la lista", null),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseDTO(
+                    500, "Se obtuvo un error al perder la mascota en la lista", null)
+                    , HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
+        try {
+            return new ResponseEntity<>("No se encuentra la mascota/s añadido ", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IllegalStateException illegalStateException) {
+            return new ResponseEntity<>("No puedo enviar a ningun/a mascota/s de la lista,No se encuentra ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(path = "/sendpetfinish/{letter}")
+    public ResponseEntity<ResponseDTO> petToFinishByLetter(@PathVariable char letter) {
+        try {
+            listDEService.getPets().movePet(Character.toUpperCase(letter));
+            return new ResponseEntity<>(new ResponseDTO(
+                    200, "los niños con la letra dada se han enviado al final",
+                    null), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //Ejercicio 08-05-2023
+    @GetMapping(path = "/removeNodeByIdentificationPet(identification)")
+    public ResponseEntity<ResponseDTO> removeNodeByIdentificationPet(@NotNull String identification) {
+        try {
+            listDEService.getPets().deletePetbyIdentification(identification);
+            return new ResponseEntity<>(new ResponseDTO(200,
+                    "Se removió al niño por identificación", null), HttpStatus.OK);
+        } catch (ListDEException e) {
+            return new ResponseEntity<>(new ResponseDTO(400, e.getMessage(), null), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
 

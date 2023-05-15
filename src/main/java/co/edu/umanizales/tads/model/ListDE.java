@@ -28,6 +28,11 @@ public class ListDE {
         return null;
     }
 
+    public void winPositionPet(String id, int position) {
+    }
+    public void losePositionPet(String id, int positionpet) {
+    }
+
     public void add(Pet pet) {
         if (headDE != null) {
             NodeDE temp = headDE;
@@ -392,7 +397,6 @@ public class ListDE {
         }
 
     }
-
 
 }
 

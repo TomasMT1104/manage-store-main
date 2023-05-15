@@ -12,23 +12,5 @@ public class PetDTO {
     private char gender;
     private String codeLocation;
 
-    public static Object getIdentification() {
-        return null;
-    }
 
-    public static Object getName() {
-        return null;
-    }
-
-    public static Object getAge() {
-        return null;
-    }
-
-    public static Object getGender() {
-        return null;
-    }
-
-    public static Object getCodeLocation() {
-        return null;
-    }
 }

@@ -4,9 +4,6 @@ import co.edu.umanizales.tads.exception.ListDEException;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.w3c.dom.Node;
-
-import java.util.List;
 
 @Data
 @Getter
@@ -318,38 +315,27 @@ public class ListDE {
 
     //Metodo 10
     //Implementar un método que me permita enviar al final de la lista a las mascotas que su nombre inicie con una letra dada
-    public void movePet(char letter) throws ListDEException {
-        if (headDE == null) {
-            throw new ListDEException("La lista está vacía");
+    public void addToFinalPetbyLetter (String letter) throws ListDEException {
+        if (head == null) {
+            throw new ListDEException("La lista está vacía.");
         }
-        NodeDE current = headDE;
-        NodeDE last = null;
-        while (current != null) {
-            if (current.getData().getName().startsWith(String.valueOf(letter))) {
-                if (last == null) {
-                    headDE = current.getNext();
+        ListDE listDECp = new ListDE();
+        NodeDE temp = headDE;
+        if (this.head != null) {
+            while (temp!= null) {
+                if (temp.getData().getName().startsWith(letter)) {
+                    listDECp.add(temp.getData());
                 } else {
-                    last.setNext(current.getNext());
+                    listDECp.addToStart(temp.getData());
                 }
-                if (current.getNext() != null) {
-                    current.getNext().setPrev(last);
-                }
-                if (tail == null) {
-                    tail = current;
-                } else {
-                    tail.setNext(current);
-                    current.setPrev((NodeDE) tail);
-                    tail = current;
-                }
-                current = current.getNext();
-                tail.setNext(null);
-                tail.setPrev(last);
-            } else {
-                last = current;
-                current = current.getNext();
+                temp = temp.getNext();
             }
         }
+        this.head = listDECp.getHead();
     }
+
+
+
 
     // Método de eliminar camicase
     // Sustentación 08/05/2023

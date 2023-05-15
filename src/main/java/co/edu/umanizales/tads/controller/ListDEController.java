@@ -28,14 +28,14 @@ public class ListDEController {
 
     @PostMapping (path = "/addpet")
     public ResponseEntity<ResponseDTO> addPet(@RequestBody PetDTO petDTO) throws ListDEException {
-        Location location = locationService.getLocationByCode((String) PetDTO.getCodeLocation());
+        Location location = locationService.getLocationByCode((String) petDTO.getCodeLocation());
         if (location == null) {
             return new ResponseEntity<>(new ResponseDTO(
                     404, "La ubicación no existe",
                     null), HttpStatus.OK);
         }
         listDEService.getPets().add(
-                new Pet(PetDTO.getIdentification(), PetDTO.getName(), PetDTO.getAge(), PetDTO.getGender(), PetDTO.getCodeLocation()));
+                new Pet(petDTO.getIdentificationPet(), petDTO.getName(), petDTO.getAge(), petDTO.getGender(), petDTO.getCodeLocation()));
 
         return new ResponseEntity<>(new ResponseDTO(
                 200, "Se ha adicionado la mascota",

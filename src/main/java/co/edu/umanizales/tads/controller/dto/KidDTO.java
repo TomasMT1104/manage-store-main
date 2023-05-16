@@ -10,5 +10,4 @@ public class KidDTO {
     private char gender;
     private String codeLocation;
 
-
 }

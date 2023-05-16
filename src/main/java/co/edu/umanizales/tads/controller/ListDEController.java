@@ -19,31 +19,32 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping
+@RequestMapping(path = "/listde")
 public class ListDEController {
     @Autowired
     private ListDEService listDEService;
     @Autowired
     private LocationService locationService;
 
-    @PostMapping (path = "/addpet")
-    public ResponseEntity<ResponseDTO> addPet(@RequestBody PetDTO petDTO) throws ListDEException {
-        Location location = locationService.getLocationByCode((String) petDTO.getCodeLocation());
-        if (location == null) {
+    @PostMapping
+    public ResponseEntity<ResponseDTO> addPet(@RequestBody PetDTO petDTO) throws ListDEException{
+        try {
+            Location location = locationService.getLocationByCode(petDTO.getCodeLocation());
+            if (location == null){
+                throw new ListDEException("La ubicación no existe");
+            }
+            Pet newPet = new Pet(petDTO.getIdentificationPet(), petDTO.getName(),
+                    petDTO.getAge(), petDTO.getPetType(), petDTO.getBreed(),
+                    location, petDTO.getGender());
+
+            listDEService.getPets().addPet(newPet);
             return new ResponseEntity<>(new ResponseDTO(
-                    404, "La ubicación no existe",
-                    null), HttpStatus.OK);
+                    200, "Se ha adicionado a la mascota con éxito", null), HttpStatus.OK);
+        } catch (ListDEException e) {
+            return new ResponseEntity<>(new ResponseDTO(404, e.getMessage(), null), HttpStatus.OK);
         }
-        listDEService.getPets().add(
-                new Pet(petDTO.getIdentificationPet(), petDTO.getName(), petDTO.getAge(), petDTO.getGender(), petDTO.getCodeLocation()));
-
-        return new ResponseEntity<>(new ResponseDTO(
-                200, "Se ha adicionado la mascota",
-                null), HttpStatus.OK);
-
     }
-
-    @GetMapping(path = "getpets")
+    @GetMapping
     public ResponseEntity<ResponseDTO> getPets() {
         try {
             return new ResponseEntity<>(new ResponseDTO(
@@ -227,10 +228,10 @@ public class ListDEController {
         }
     }
 
-    @GetMapping(path = "/sendpetfinish/{letter}")
+    @GetMapping(path = "/addtofinalpetbyletter/{letter}")
     public ResponseEntity<ResponseDTO> petToFinishByLetter(@PathVariable char letter) {
         try {
-            listDEService.getPets().movePet(Character.toUpperCase(letter));
+            listDEService.getPets().addToFinalPetbyLetter(Character.toUpperCase(letter));
             return new ResponseEntity<>(new ResponseDTO(
                     200, "los niños con la letra dada se han enviado al final",
                     null), HttpStatus.OK);
@@ -238,6 +239,7 @@ public class ListDEController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     //Ejercicio 08-05-2023
     @GetMapping(path = "/removeNodeByIdentificationPet(identification)")

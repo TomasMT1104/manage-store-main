@@ -28,21 +28,25 @@ public class ListSE {
     no
         metemos el niño en el costal y ese costal es la cabeza
      */
-    public void add(Kid kid){
-        if(head != null){
+    public void add(Kid kid) throws ListSEException {
+        if (head != null) {
             Node temp = head;
-            while(temp.getNext() !=null)
-            {
+            while (temp.getNext() != null) {
+                if (temp.getData().getIdentification().equals(kid.getIdentification())) {
+                    throw new ListSEException(("Ya existe un niño"));
+                }
                 temp = temp.getNext();
+            }
+            if (temp.getData().getIdentification().equals(kid.getIdentification())) {
+                throw new ListSEException("Ya existe un niño");
             }
             /// Parado en el último
             Node newNode = new Node(kid);
             temp.setNext(newNode);
-        }
-        else {
+        } else {
             head = new Node(kid);
         }
-        size ++;
+        size++;
     }
 
     /* Adicionar al inicio

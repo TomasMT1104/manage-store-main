@@ -4,6 +4,7 @@ import co.edu.umanizales.tads.controller.dto.KidDTO;
 import co.edu.umanizales.tads.controller.dto.KidsByLocationDTO;
 import co.edu.umanizales.tads.controller.dto.ReportKidLocationGenderDTO;
 import co.edu.umanizales.tads.controller.dto.ResponseDTO;
+import co.edu.umanizales.tads.exception.ListSEException;
 import co.edu.umanizales.tads.model.Kid;
 import co.edu.umanizales.tads.model.Location;
 import co.edu.umanizales.tads.service.ListSEService;
@@ -48,21 +49,18 @@ public class  ListSEController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDTO> addKid(@RequestBody KidDTO kidDTO){
+    public ResponseEntity<ResponseDTO> addKid(@RequestBody KidDTO kidDTO) {
         Location location = locationService.getLocationByCode(kidDTO.getCodeLocation());
-       if(location == null){
-           return new ResponseEntity<>(new ResponseDTO(
-                   404,"La ubicación no existe",
-                   null), HttpStatus.OK);
-       }
-       listSEService.getKids().add(
-               new Kid(kidDTO.getIdentification(),
-                       kidDTO.getName(), kidDTO.getAge(),
-                       kidDTO.getGender(), location));
-        return new ResponseEntity<>(new ResponseDTO(
-                200,"Se ha adicionado el petacón",
-                null), HttpStatus.OK);
+        if (location == null) {
+            return new ResponseEntity<>(new ResponseDTO(404, "La ubicación no existe", null), HttpStatus.OK);
+        }
+        try {
+            listSEService.getKids().add(new Kid(kidDTO.getIdentification(), kidDTO.getName(), kidDTO.getAge(), kidDTO.getGender(), location));
 
+        } catch (ListSEException e){
+            return new ResponseEntity<>(new ResponseDTO(409,e.getMessage(),null),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ResponseDTO(200,"Se ha adicionado el petacon",null),HttpStatus.OK);
     }
 
     @GetMapping(path = "/kidsbylocations")

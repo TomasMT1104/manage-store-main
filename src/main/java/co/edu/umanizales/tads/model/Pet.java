@@ -6,27 +6,12 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Pet {
+    private String identificationPet;
     private String name;
-
     private byte age;
-
+    private String petType;
     private String breed;
-
+    private Location location;
     private char gender;
 
-    private Location location;
-
-    private String identification;
-
-    private byte position;
-
-    public Pet(Object identification, Object name, Object age, Object gender, Object codeLocation) {
-    }
-
-    public Pet getData() {
-        return null;
-    }
-
-    public Pet(String identification, String name, int sum) {
-    }
 }

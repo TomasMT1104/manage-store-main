@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Getter
 @Setter
@@ -13,6 +16,8 @@ public class ListDE {
     private int size;
     private NodeDE head;
     private Object tail;
+    private List<Pet> pets = new ArrayList<>();
+
 
     private void addToStart(Pet data) {
     }
@@ -21,28 +26,42 @@ public class ListDE {
         return headDE;
     }
 
-    public Object print() {
-        return null;
+    public List <Pet> print(){
+       if (size == 0){
+           return null;
+       }
+        if (head != null){
+            NodeDE temp = head;
+            while (temp != null){
+                pets.add(temp.getData());
+                temp = temp.getNext();
+            }
+        }
+        return pets;
     }
+
 
     public void winPositionPet(String id, int position) {
     }
     public void losePositionPet(String id, int positionpet) {
     }
 
-    public void add(Pet pet) {
-        if (headDE != null) {
-            NodeDE temp = headDE;
-            while (temp.getNext() != null) {
-                temp.getNext();
-            }
-            NodeDE newNodeDE = new NodeDE(pet);
-            temp.setNext(newNodeDE);
-            newNodeDE.setNext(newNodeDE);
-        } else {
-            headDE = new NodeDE(pet);
+    public void addPet(Pet pet) throws IllegalArgumentException{
+        if (pet == null) {
+            throw new IllegalArgumentException("El objeto pet no puede ser nulo");
         }
-
+        if (head == null) {
+            head = new NodeDE(pet);
+        } else {
+            NodeDE newNode = new NodeDE(pet);
+            NodeDE current = head;
+            while (current.getNext() != null) {
+                current = current.getNext();
+            }
+            current.setNext(newNode);
+            newNode.setPrev(current);
+        }
+        size++;
     }
 
 
@@ -70,29 +89,30 @@ public class ListDE {
         }
     }
 
+
     //Metodo 2 
     //Machos al inicio y Hembras al final
     public void getorderMalesToStart() throws ListDEException {
         if (this.head != null) {
-            ListDE listDoublyLinked = new ListDE();
+            ListDE listDE = new ListDE();
             NodeDE temp = this.head;
             NodeDE lastMale = null;
             while (temp != null) {
                 if (temp.getData().getGender() == 'M') {
                     if (lastMale != null) {
-                        listDoublyLinked.addToStart(lastMale.getData());
+                        listDE.addToStart(lastMale.getData());
                     }
                     lastMale = temp;
                 } else {
-                    listDoublyLinked.add(temp.getData());
+                    listDE.addPet(temp.getData());
                 }
                 temp = temp.getNext();
             }
             if (lastMale != null) {
-                listDoublyLinked.addToStart(lastMale.getData());
+                listDE.addToStart(lastMale.getData());
             }
-            this.head = listDoublyLinked.getHead();
-            this.tail = listDoublyLinked.getTail();
+            this.head = listDE.getHead();
+            this.tail = listDE.getTail();
         } else {
             throw new ListDEException("La lista está vacía");
         }
@@ -238,12 +258,12 @@ public class ListDE {
 
     //Metodo 7
     //Método que me permita defirirle a una mascota determinado que adelante un número dado de posiciones
-    public void MovePet(String identification, int posicion) {
+    public void movePet(String identification, int posicion) {
         NodeDE current = head;
         NodeDE targetNode = null;
         int currentPos = 0;
         while (current != null) {
-            if (current.getData().getIdentification().equals(identification)) {
+            if (current.getData().getIdentificationPet().equals(identification)) {
                 targetNode = current;
                 break;
             }
@@ -282,7 +302,7 @@ public class ListDE {
         int count = getLength() - 1;
         NodeDE temp = (NodeDE) tail;
         while (temp != null) {
-            if (temp.getData().getIdentification().equals(id)) {
+            if (temp.getData().getIdentificationPet().equals(id)) {
                 return count;
             }
             temp = temp.getPrev();
@@ -315,7 +335,7 @@ public class ListDE {
 
     //Metodo 10
     //Implementar un método que me permita enviar al final de la lista a las mascotas que su nombre inicie con una letra dada
-    public void addToFinalPetbyLetter (String letter) throws ListDEException {
+    public void addToFinalPetbyLetter (char letter) throws ListDEException {
         if (head == null) {
             throw new ListDEException("La lista está vacía.");
         }
@@ -323,8 +343,8 @@ public class ListDE {
         NodeDE temp = headDE;
         if (this.head != null) {
             while (temp!= null) {
-                if (temp.getData().getName().startsWith(letter)) {
-                    listDECp.add(temp.getData());
+                if (temp.getData().getName().startsWith(String.valueOf(letter))) {
+                    listDECp.addPet(temp.getData());
                 } else {
                     listDECp.addToStart(temp.getData());
                 }

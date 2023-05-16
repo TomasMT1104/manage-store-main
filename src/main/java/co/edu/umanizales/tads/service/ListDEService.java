@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 @Data
 public class ListDEService {
     private ListDE pets;
-    public ListDEService() {
-
-
-
+    public ListDEService(){
+        pets = new ListDE();
     }
 }

@@ -124,6 +124,36 @@ public class ListSE {
 
     //Metodo 2
     //Niños al inicio y niñas al final
+    public void addBoyStart() throws ListSEException {
+        if (this.head == null) {
+            throw new ListSEException("Cabeza es nulo");
+        }
+
+        ListSE listcopy = new ListSE();
+        Node temp = this.head;
+
+        while (temp != null) {
+            if (temp.getData().getGender() == 'M') {
+                listcopy.add(temp.getData());
+            }
+            temp = temp.getNext();
+        }
+
+        temp = this.head;
+
+        while (temp != null) {
+            if (temp.getData().getGender() == 'F') {
+                listcopy.add(temp.getData());
+            }
+            temp = temp.getNext();
+        }
+
+        if (listcopy.getHead() == null) {
+            throw new ListSEException("No hay niños en la lista");
+        }
+
+        this.head = listcopy.getHead();
+    }
 
 
     //Metodo 3

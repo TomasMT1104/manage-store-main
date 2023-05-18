@@ -41,14 +41,14 @@ public class ListDE {
     }
 
 
-    public void winPositionPet(String id, int position) {
+    public void winPositionPet(String identificationPet, int position) {
     }
-    public void losePositionPet(String id, int positionpet) {
+    public void losePositionPet(String identificationPet, int positionpet) {
     }
 
-    public void addPet(Pet pet) throws IllegalArgumentException{
+    public void addPet(Pet pet) throws ListDEException{
         if (pet == null) {
-            throw new IllegalArgumentException("El objeto pet no puede ser nulo");
+            throw new ListDEException("La mascota no puede ser nulo");
         }
         if (head == null) {
             head = new NodeDE(pet);
@@ -64,58 +64,60 @@ public class ListDE {
         size++;
     }
 
+    public void addPetToStart(Pet data) throws ListDEException {
+        if (headDE == null) {
+            throw new ListDEException("La lista está vacía y no se puede realizar la operacion");
+        }
+        ListDE listCopy = new ListDE();
+        NodeDE temp = headDE;
+        while (temp != null) {
+            if (temp.getData().getGender() == 'M') {
+                listCopy.addPetToStart(temp.getData());
+            } else {
+                listCopy.addPet(temp.getData());
+            }
+            temp = temp.getNext();
+        }
+        headDE = listCopy.getHeadDE();
+    }
+
 
     //Metodos Parcial
 
     //Metodo 1
     //Invertir la lista
-    public void invert() throws NullPointerException {
-        if (this.head != null) {
-            ListDE listCp = new ListDE();
-            NodeDE temp = this.head;
+    public void invert() throws ListDEException {
+        if (this.headDE == null) {
+            throw new ListDEException("No hay niños para poder invertir la lista");
+        } else {
+            ListDE listDLECp = new ListDE();
+            NodeDE temp = this.headDE;
             while (temp != null) {
-                listCp.addToStart(temp.getData());
+                listDLECp.addPetToStart(temp.getData());
                 temp = temp.getNext();
             }
-            this.head = listCp.getHead();
-            NodeDE currentNode = this.head;
-            while (currentNode.getNext() != null) {
-                NodeDE nextNode = currentNode.getNext();
-                nextNode.setPrev(currentNode);
-                currentNode = nextNode;
-            }
-        } else {
-            throw new NullPointerException("Cabeza es nulo");
+            this.headDE = listDLECp.getHeadDE();
         }
     }
 
 
     //Metodo 2 
     //Machos al inicio y Hembras al final
-    public void getorderMalesToStart() throws ListDEException {
-        if (this.head != null) {
-            ListDE listDE = new ListDE();
-            NodeDE temp = this.head;
-            NodeDE lastMale = null;
-            while (temp != null) {
-                if (temp.getData().getGender() == 'M') {
-                    if (lastMale != null) {
-                        listDE.addToStart(lastMale.getData());
-                    }
-                    lastMale = temp;
-                } else {
-                    listDE.addPet(temp.getData());
-                }
-                temp = temp.getNext();
-            }
-            if (lastMale != null) {
-                listDE.addToStart(lastMale.getData());
-            }
-            this.head = listDE.getHead();
-            this.tail = listDE.getTail();
-        } else {
-            throw new ListDEException("La lista está vacía");
+    public void getOrderMalesToStart() throws ListDEException {
+        if (headDE == null) {
+            throw new ListDEException("La lista está vacía y no se puede realizar la operacion");
         }
+        ListDE listCopy = new ListDE();
+        NodeDE temp = headDE;
+        while (temp != null) {
+            if (temp.getData().getGender() == 'M') {
+                listCopy.addPetToStart(temp.getData());
+            } else {
+                listCopy.addPet(temp.getData());
+            }
+            temp = temp.getNext();
+        }
+        headDE = listCopy.getHeadDE();
     }
 
     //Metodo 3
@@ -153,7 +155,7 @@ public class ListDE {
 
     //Metodo 4
     //Dada una edad eliminar de la lista a las mascotas de la edad dada
-    public void deletePetbyAge(byte age) throws ListDEException {
+    public void deletePetByAge(Byte age) throws ListDEException {
         if (age <= 0) {
             throw new ListDEException("La edad debe ser un valor positivo mayor que cero");
         }
@@ -199,35 +201,9 @@ public class ListDE {
                 temp = temp.getNext();
             }
             averageAge = averageAge / getLength();
-            return averageAge;
+            return (double) averageAge;
         } else {
             throw new ListDEException("La lista está vacía");
-        }
-    }
-
-    public void deletePetByAge(byte age) throws ListDEException {
-        if (age <= 0) {
-            throw new ListDEException("La edad debe ser un valor positivo mayor que cero");
-        }
-        NodeDE temp = this.head;
-        while (temp != null) {
-            if (temp.getData().getAge() == age) {
-                if (temp == this.head) {
-                    this.head = temp.getNext();
-                    if (this.head != null) {
-                        this.head.setPrevious(null);
-                    }
-                } else if (temp == this.tail) {
-                    this.tail = temp.getPrevious();
-                    if (this.tail != null) {
-                        this.tail.getClass();
-                    }
-                } else {
-                    temp.getPrev().setNext(temp.getNext());
-                    temp.getNext().setPrevious(temp.getPrevious());
-                }
-            }
-            temp = temp.getNext();
         }
     }
 

@@ -125,77 +125,88 @@ public class ListSE {
     //Metodo 2
     //Niños al inicio y niñas al final
     public void addBoyStart() throws ListSEException {
-        if (this.head == null) {
-            throw new ListSEException("Cabeza es nulo");
-        }
+        if (this.head != null) {
+            ListSE listCp = new ListSE();
+            Node temp = head;
 
-        ListSE listcopy = new ListSE();
-        Node temp = this.head;
-
-        while (temp != null) {
-            if (temp.getData().getGender() == 'M') {
-                listcopy.add(temp.getData());
+            while (temp != null) {
+                if (temp.getData().getGender() == 'M') {
+                    listCp.addToStart(temp.getData());
+                } else {
+                    listCp.add(temp.getData());
+                }
+                temp = temp.getNext();
             }
-            temp = temp.getNext();
+            head = listCp.getHead();
+        } else {
+            throw new ListSEException("No hay niños para completar esta operacion");
         }
-
-        temp = this.head;
-
-        while (temp != null) {
-            if (temp.getData().getGender() == 'F') {
-                listcopy.add(temp.getData());
-            }
-            temp = temp.getNext();
-        }
-
-        if (listcopy.getHead() == null) {
-            throw new ListSEException("No hay niños en la lista");
-        }
-
-        this.head = listcopy.getHead();
     }
-
 
     //Metodo 3
     //Intercalar niño, niña, niño, niña
-    public void getAlternateKids() throws ListSEException {
-        Node boys = head;
-        Node girls = head.getNext();
-        Node girlsHead = girls;
-        if (head == null || head.getNext() == null) {
-            throw new ListSEException("La lista esta vacia o solo tiene un elemento");
-        }
-        while (girls != null && boys != null) {
-            boys.setNext(girls.getNext());
-            if (girls.getNext() != null) {
-                girls.setNext(girls.getNext().getNext());
-            }
-            boys = boys.getNext();
-            girls = girls.getNext();
-        }
-        if (girls == null) {
-            boys.setNext(girlsHead);
+    public void alternateKids() throws ListSEException {
+        ListSE alternateList = new ListSE();
+
+        ListSE listBoys = new ListSE();
+        ListSE listGirls = new ListSE();
+
+        Node temp = head;
+
+        if (this.head == null && this.head.getNext() == null) {
+            throw new ListSEException("No existen niños o no hay suficientes para alternar");
         } else {
-            girls.setNext(girlsHead);
+            while (temp != null) {
+                if (temp.getData().getGender() == 'M') {
+                    listBoys.add(temp.getData());
+                } else {
+                    if (temp.getData().getGender() == 'F') {
+                        listGirls.add(temp.getData());
+                    }
+                }
+                temp = temp.getNext();
+            }
+
+            Node boysNode = listBoys.getHead();
+            Node girlsNode = listGirls.getHead();
+
+            while (boysNode != null) {
+                if (boysNode != null) {
+                    alternateList.add(boysNode.getData());
+                    boysNode = boysNode.getNext();
+                }
+                if (girlsNode != null) {
+                    alternateList.add(girlsNode.getData());
+                    girlsNode = girlsNode.getNext();
+                }
+            }
+            this.head = alternateList.getHead();
         }
     }
 
     //Metodo 4
     //Dada una edad eliminar de la lista  a los niños de la edad dada
-    public void deleteKidbyAge(Node head, byte age) throws ListSEException {
+    public void deleteKidbyAge(byte age)  throws ListSEException {
+        Node temp = head;
+        ListSE listcopy = new ListSE();
         if (age <= 0) {
-            throw new ListSEException ("La edad debe ser un valor positivo mayor que cero");
-        }
-        Node temp = this.head;
-        ListSE listSECp = new ListSE();
-        while(temp!=null) {
-            if (temp.getData().getAge() != age) {
-                listSECp.addToStart(temp.getData());
-                temp.getNext();
+            throw new ListSEException("La edad debe ser mayor que cero");
+        } else {
+            if (this.head == null) {
+                throw new ListSEException("No existen niños para realizar la operación");
+            } else {
+
+                while (temp != null) {
+                    if (temp.getData().getAge() != age) {
+                        listcopy.addToStart(temp.getData());
+                    }
+                    temp = temp.getNext();
+                }
+                this.head = listcopy.getHead();
             }
         }
-        this.head = listSECp.getHead();
     }
+
 
     //Metodo 5
     //Obtener el promedio de edad de los niños de la lista
@@ -250,7 +261,7 @@ public class ListSE {
 
     //Metodo 7
     //Método que me permita defirirle a un niño determinado que adelante un número dado de posiciones
-    public void MoveKid(String id, int posicion) {
+    public void moveKid(String id, int position) {
         Node act = head;
         Node ant = null;
         Node objetive = null;
@@ -268,12 +279,12 @@ public class ListSE {
             return;
         }
         act = head;
-        while (cont < posicion - 1 && act != null) {
+        while (cont < position - 1 && act != null) {
             objetive = act;
             act = act.getNext();
             cont++;
         }
-        if (cont < posicion - 1) {
+        if (cont < position - 1) {
             System.out.print("La posición que desea está más allá de lo que va la lista");
             return;
         }
@@ -303,52 +314,53 @@ public class ListSE {
 
     //Metodo 9
     //Obtener un informe de niños por rango de edades
-    public void ReportByAge(byte minAge, byte maxAge) throws ListSEException {
-        Node current = head;
-        boolean found = false;
-        while (current != null) {
-            byte edad = current.getData().getAge();
-            if (edad >= minAge && edad <= maxAge) {
-                String name = current.getData().getName();
-                // Aquí puedes hacer lo que quieras con los datos del niño encontrado
-                found = true;
+    public int getReportByRangeAge(int letter, int last) throws ListSEException {
+        Node temp = head;
+        int count = 0;
+
+        if (this.head == null) {
+            throw new ListSEException("No existen niños para poder realizar la operación");
+        } else {
+            while (temp != null) {
+                if (temp.getData().getAge() >= letter && temp.getData().getAge() <= last) {
+                    count++;
+                }
+                temp = temp.getNext();
             }
-            current = current.getNext();
-        }
-        if (!found) {
-            throw new ListSEException("No se encontraron niños dentro del rango de edad especificado.");
+            return count;
         }
     }
 
     //Metodo 10
     //Implementar un método que me permita enviar al final de la lista a los niños que su nombre inicie con una letra dada
-    public void moveKid(char letter) throws ListSEException {
-        if (head == null) {
-            throw new ListSEException("La lista está vacía");
+    public void moveKidToTheEndByLetter(char letter) throws ListSEException {
+        ListSE listCopy = new ListSE();
+        Node temp = this.head;
+
+        if (this.head == null) {
+            throw new ListSEException("No existen niños para poder realizar la operación");
+        } else {
+            while (temp != null) {
+                if (temp.getData().getName().charAt(0) != Character.toUpperCase(letter)) {
+                    listCopy.addToStart(temp.getData());
+                }
+            }
+            temp = temp.getNext();
         }
-        Node prev = null;
-        Node current = head;
-        Node last = null;
-        while (current != null) {
-            if (current.name.startsWith(String.valueOf(letter))) {
-                if (prev == null) {
-                    head = current.getNext();
-                } else {
-                    prev.setNext(current.getNext());
+
+        temp = this.head;
+
+        if (this.head == null) {
+            throw new ListSEException("No existen niños para poder realizar la operación");
+        } else {
+            while (temp != null) {
+                if (temp.getData().getName().charAt(0) == Character.toUpperCase(letter)) {
+                    listCopy.add(temp.getData());
                 }
-                if (last == null) {
-                    last = current;
-                } else {
-                    last.setNext(current);
-                    last = current;
-                }
-                current = current.getNext();
-                last.setNext(null);
-            } else {
-                prev = current;
-                current = current.getNext();
+                temp = temp.getNext();
             }
         }
+        this.head = listCopy.getHead();
     }
 
     public void getReportKidsByLocationGendersByAge(byte age, ReportKidLocationGenderDTO report){

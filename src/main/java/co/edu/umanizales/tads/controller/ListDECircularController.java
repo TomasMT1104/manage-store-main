@@ -21,13 +21,13 @@ public class ListDECircularController {
     private LocationService locationService;
 
     @GetMapping
-    public ResponseEntity<ResponseDTO> getPets() {
+    public ResponseEntity<ResponseDTO> getPets(){
         return new ResponseEntity<>(new ResponseDTO(
-                200, listDECircularService.getPetCircular().print(), null), HttpStatus.OK);
+                200, listDECircularService.getPetCircular().getPets(), null), HttpStatus.OK);
     }
 
 
-    @PostMapping
+    @PostMapping(path = "/addpet")
     public ResponseEntity<ResponseDTO> addPet(@RequestBody PetDTO petDTO) throws ListDEException {
         try {
             Location location = locationService.getLocationByCode(petDTO.getCodeLocation());
@@ -46,8 +46,7 @@ public class ListDECircularController {
         }
     }
 
-
-    @PostMapping(path = "/addtostart")
+        @PostMapping(path = "/addtostart")
     public ResponseEntity<ResponseDTO> addToStar(@RequestBody PetDTO petDTO) {
         Location location = locationService.getLocationByCode(petDTO.getCodeLocation());
         listDECircularService.getPetCircular().addToStart(

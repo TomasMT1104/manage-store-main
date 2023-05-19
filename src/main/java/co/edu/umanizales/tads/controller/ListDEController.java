@@ -11,7 +11,6 @@ import co.edu.umanizales.tads.model.Range;
 import co.edu.umanizales.tads.service.ListDEService;
 import co.edu.umanizales.tads.service.LocationService;
 import co.edu.umanizales.tads.service.RangeService;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +37,7 @@ public class ListDEController {
                 throw new ListDEException("La ubicación no existe");
             }
             Pet newPet = new Pet(petDTO.getIdentificationPet(), petDTO.getName(),
-                    petDTO.getAge(), petDTO.getPetType(), petDTO.getBreed(),
-                    location, petDTO.getGender(),false);
+                    petDTO.getAge(), petDTO.getPetType(), petDTO.getBreed(), location, petDTO.getGender(),false);
 
             listDEService.getPets().addPet(newPet);
             return new ResponseEntity<>(new ResponseDTO(
@@ -64,7 +62,7 @@ public class ListDEController {
     public ResponseEntity<ResponseDTO> changeExtremes() throws ListDEException {
         listDEService.getPets().changeExtremes();
         return new ResponseEntity<>(new ResponseDTO(
-                200, "se han intercambiado los extremos", null), HttpStatus.OK);
+                200, "Se han intercambiado los extremos", null), HttpStatus.OK);
     }
 
     @GetMapping(path = "/invert")
@@ -113,14 +111,12 @@ public class ListDEController {
     }
 
     @DeleteMapping(path = "/deletepetbyage/{age}")
-    public ResponseEntity<ResponseDTO> deletePetbyAge(byte age)  {
+    public ResponseEntity<ResponseDTO> deletePetByAge(@PathVariable byte age) {
         try {
             listDEService.getPets().deletePetByAge(age);
-            return new ResponseEntity<>(new ResponseDTO(
-                    200, "La mascota fue eliminada con exito", null), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDTO(200, "La mascota fue eliminada exitosamente", null), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseDTO(
-                    500, "Hay un error al eliminar la mascota estar atento ", null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO(500, "Ocurrió un error al eliminar la mascota", null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -156,16 +152,12 @@ public class ListDEController {
     }
 
     @GetMapping(path = "/winpositionpet/{id}/{position}")
-    public ResponseEntity<ResponseDTO> winPositionPet(String identificationPet, int position){
+    public ResponseEntity<ResponseDTO> winPositionPet(@PathVariable String identificationPet, @PathVariable int position) {
         try {
-            listDEService.getPets().winPositionPet(identificationPet, position);
-            return new ResponseEntity<>(new ResponseDTO(
-                    200, "La mascota gano las posiciones en la lista especificadas", null)
-                    , HttpStatus.OK);
+            listDEService.getPets().winPositionPet(identificationPet,position);
+            return new ResponseEntity<>(new ResponseDTO(200, "Accion realizada con exito, se ha podido adelantar la posicion de la mascota", null), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseDTO(
-                    500, "Se produjo un error en ganar posiciones de la mascota en la lista",
-                    null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO(500, "Se produjo un error al realizar la operacion", null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -197,28 +189,24 @@ public class ListDEController {
         }
     }
 
-    @PostMapping(path = "/addtofinalpetbyletter/{letter}")
-    public ResponseEntity<ResponseDTO> addToFinalPetbyLetter(@PathVariable char letter) {
-        try {
-            listDEService.getPets().addToFinalPetbyLetter(Character.toUpperCase(letter));
-            return new ResponseEntity<>(new ResponseDTO(
-                    200, "Las mascotas con la letra dada se han enviado al final",
-                    null), HttpStatus.OK);
+    @GetMapping(path = "/sendtofinalpetbyletter/{letter}")
+    public ResponseEntity<ResponseDTO> sendToFinalPetbyLetter(@PathVariable char letter){
+        try{
+            listDEService.getPets().sendToFinalPetbyLetter(Character.toUpperCase(letter));
+            return new ResponseEntity<>(new ResponseDTO(200,"Accion realizada con exito, las mascotas con la letra dada se han enviado al final de la lista", null), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
     //Ejercicio 08-05-2023
-    @DeleteMapping(path = "/deletepetbyidentifiaction/{identificationPet}")
-    public ResponseEntity<ResponseDTO> deletePetbyIdentification(@NotNull String identification) {
-        try {
-            listDEService.getPets().deletePetbyIdentification(identification);
-            return new ResponseEntity<>(new ResponseDTO(200,
-                    "Se removió a la mascota por identificación", null), HttpStatus.OK);
-        } catch (ListDEException e) {
-            return new ResponseEntity<>(new ResponseDTO(400, e.getMessage(), null), HttpStatus.BAD_REQUEST);
+    @DeleteMapping(path = "/deletepetbyidentification/{id}")
+    public ResponseEntity<ResponseDTO> deletePetbyIdentification(@PathVariable String id) throws ListDEException {
+        if (listDEService.getPets().print() != null) {
+            listDEService.getPets().deletePetbyIdentification(id);
+            return new ResponseEntity<>(new ResponseDTO(200, "La mascota se elimino con exito", null), HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(new ResponseDTO(400, "No se pudo realizar la operacion debido a que no existian mascotas", null), HttpStatus.BAD_REQUEST);
         }
     }
 

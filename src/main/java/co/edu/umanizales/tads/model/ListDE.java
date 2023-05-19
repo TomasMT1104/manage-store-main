@@ -208,26 +208,25 @@ public class ListDE {
     //Metodo 4
     //Dada una edad eliminar de la lista a las mascotas de la edad dada
     public void deletePetByAge(Byte age) throws ListDEException {
-        if (age <= 0) {
-            throw new ListDEException("La edad debe ser un valor positivo mayor que cero");
+        if (age == null) {
+            throw new ListDEException("La edad de la mascota no puede ser nula");
         }
         NodeDE temp = headDE;
-        ListDE listDLECp = new ListDE();
+        NodeDE previo;
         while (temp != null) {
-            if (temp.getData().getAge() != age) {
-                listDLECp.addToStart(temp.getData());
+            if (temp.getData().getAge() == age) {
+                previo = temp.getPrevious();
+                NodeDE next = temp.getNext();
+                if (previo == null) {
+                    headDE = next;
+                } else {
+                    previo.setNext(next);
+                }
+                if (next != null) {
+                    next.setPrevious(previo);
+                }
             }
             temp = temp.getNext();
-        }
-        if (listDLECp.getHead() == null) {
-            throw new ListDEException("No hay mascotas con la edad dada en la lista");
-        }
-        this.headDE = listDLECp.getHead();
-        this.headDE.setPrev(null);
-        NodeDE tail = this.headDE;
-        while (tail.getNext() != null) {
-            tail = tail.getNext();
-            tail.setPrev(tail.getPrevious().getPrevious());
         }
     }
 
@@ -352,29 +351,30 @@ public class ListDE {
 
     //Metodo 10
     //Implementar un método que me permita enviar al final de la lista a las mascotas que su nombre inicie con una letra dada
-    public void addToFinalPetbyLetter (char letter) throws ListDEException {
-        if (headDE == null) {
-            throw new ListDEException("La lista está vacía.");
-        }
-        ListDE listDECp = new ListDE();
-        NodeDE temp = headDE;
+    public void sendToFinalPetbyLetter (char letter) throws ListDEException {
         if (this.headDE != null) {
-            while (temp!= null) {
-                if (temp.getData().getName().startsWith(String.valueOf(letter))) {
-                    listDECp.addPet(temp.getData());
+            ListDE listCopy = new ListDE();
+            NodeDE temp = this.headDE;
+            char firstChar = Character.toUpperCase(letter);
+
+            while (temp != null) {
+                char firstLetter = temp.getData().getName().charAt(0);
+                if (Character.toUpperCase(firstLetter) != firstChar) {
+                    listCopy.addPetToStart(temp.getData());
                 } else {
-                    listDECp.addToStart(temp.getData());
+                    listCopy.addPet(temp.getData());
                 }
                 temp = temp.getNext();
             }
+            this.headDE = listCopy.getHeadDE();
+        } else {
+            throw new ListDEException("La lista no puede estar vacia");
         }
-        this.headDE = listDECp.getHead();
     }
 
 
 
-
-    // Método de eliminar camicase
+    // Método de eliminar kamicase
     // Sustentación 08/05/2023
 
     /*
@@ -389,36 +389,34 @@ public class ListDE {
 
      */
 
-    public void deletePetbyIdentification(String identification) throws ListDEException {
+    public void deletePetbyIdentification(String identificationPet) throws ListDEException {
         if (headDE == null) {
             throw new ListDEException("La lista está vacia");
         }
         NodeDE temp = headDE;
-        NodeDE previousNode = null;
-
-        while (temp != null) {
-            temp = temp.getNext();
-            if (temp.getName().equals(identification)) {
-                if (previousNode != null) {
-                    previousNode.setNext(temp.getNext());
+        NodeDE before , after;
+        if(this.headDE != null) {
+            if (this.headDE.getData().getIdentificationPet().equals(identificationPet)) {
+                this.headDE = headDE.getNext();
+                if (headDE != null) {
+                    headDE.setPrevious(null);
+                }
+            } else {
+                while (!temp.getData().getIdentificationPet().equals(identificationPet)) {
+                    temp = temp.getNext();
+                }
+                temp = temp.getNext();
+                if(temp.getNext() == null) {
+                    before = temp.getPrevious();
+                    before.setNext(null);
                 } else {
-                    headDE = temp.getNext();
+                    before = temp.getPrevious();
+                    after = temp.getNext();
+                    before.setNext(after);
+                    after.setPrevious(before);
                 }
-
-                if (temp.getNext() != null) {
-                    temp.getNext().setPrevious(previousNode);
-                }
-
-                temp.setPrevious(null);
-                temp.setNext(null);
-
-                return;
             }
-
-            previousNode = temp;
-            temp = temp.getNext();
         }
-
     }
 
 }

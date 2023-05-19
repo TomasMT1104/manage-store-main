@@ -2,12 +2,15 @@ package co.edu.umanizales.tads.controller;
 
 import co.edu.umanizales.tads.controller.dto.PetDTO;
 import co.edu.umanizales.tads.controller.dto.PetsByLocationDTO;
+import co.edu.umanizales.tads.controller.dto.RangeDTO;
 import co.edu.umanizales.tads.controller.dto.ResponseDTO;
 import co.edu.umanizales.tads.exception.ListDEException;
 import co.edu.umanizales.tads.model.Location;
 import co.edu.umanizales.tads.model.Pet;
+import co.edu.umanizales.tads.model.Range;
 import co.edu.umanizales.tads.service.ListDEService;
 import co.edu.umanizales.tads.service.LocationService;
+import co.edu.umanizales.tads.service.RangeService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,8 @@ public class ListDEController {
     private ListDEService listDEService;
     @Autowired
     private LocationService locationService;
+    @Autowired
+    private RangeService rangeService;
 
     @PostMapping
     public ResponseEntity<ResponseDTO> addPet(@RequestBody PetDTO petDTO) throws ListDEException{
@@ -53,6 +58,13 @@ public class ListDEController {
                     500, "Error al obtener la lista de mascotas" + e.getMessage(),
                     null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping(path = "/changeextremes")
+    public ResponseEntity<ResponseDTO> changeExtremes() throws ListDEException {
+        listDEService.getPets().changeExtremes();
+        return new ResponseEntity<>(new ResponseDTO(
+                200, "se han intercambiado los extremos", null), HttpStatus.OK);
     }
 
     @GetMapping(path = "/invert")
@@ -144,9 +156,9 @@ public class ListDEController {
     }
 
     @GetMapping(path = "/winpositionpet/{id}/{position}")
-    public ResponseEntity<ResponseDTO> winPositionPet(String id, int position){
+    public ResponseEntity<ResponseDTO> winPositionPet(String identificationPet, int position){
         try {
-            listDEService.getPets().winPositionPet(id,position);
+            listDEService.getPets().winPositionPet(identificationPet, position);
             return new ResponseEntity<>(new ResponseDTO(
                     200, "La mascota gano las posiciones en la lista especificadas", null)
                     , HttpStatus.OK);
@@ -158,9 +170,9 @@ public class ListDEController {
     }
 
     @GetMapping(path = "/losepositionpet/{identificaionPet}/{positionpet}")
-    public ResponseEntity<ResponseDTO>losePositionPet(String id, int positionpet){
+    public ResponseEntity<ResponseDTO>losePositionPet(String identificationPet, int positionpet){
         try {
-            listDEService.getPets().losePositionPet(id,positionpet);
+            listDEService.getPets().losePositionPet(identificationPet,positionpet);
             return new ResponseEntity<>(new ResponseDTO(
                     200, "La mascota perdio posiciones en la lista", null),
                     HttpStatus.OK);
@@ -170,6 +182,21 @@ public class ListDEController {
                     , HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(path = "/reportrangebyage")
+    public ResponseEntity<ResponseDTO> getReportRangeByAgePets(){
+        try {
+            List<RangeDTO> petsRangeList = new ArrayList<>();
+            for (Range i : rangeService.getRange()){
+                int quantity = listDEService.getPets().getReportPetByRangeAge(i.getFrom(), i.getTo());
+                petsRangeList.add(new RangeDTO(i,quantity));
+            }
+            return new ResponseEntity<>(new ResponseDTO(200,"Accion realizada con exito, el rango de los niños es: "+ petsRangeList, null), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseDTO(500,"Error al obtener el rango de edades", null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping(path = "/addtofinalpetbyletter/{letter}")
     public ResponseEntity<ResponseDTO> addToFinalPetbyLetter(@PathVariable char letter) {
         try {

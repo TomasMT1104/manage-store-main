@@ -1,12 +1,12 @@
 package co.edu.umanizales.tads.model;
 
-import co.edu.umanizales.tads.exception.ListDEException;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Data
 @Getter
@@ -18,138 +18,139 @@ public class ListDECircular {
 
 
 
-    public ArrayList<Pet> printList(){
-        ArrayList<Pet> pets = new ArrayList<>();
-        if (this.head != null) {
-            NodeDE temp = this.head;
-
-            do {
-                pets.add(temp.getData());
-                temp = temp.getNext();
-            } while (temp != this.head);
+    public List<Pet> printList() {
+        pets.clear();
+        NodeDE temp = head;
+        do {
+            pets.add(temp.getData());
+            temp = temp.getNext();
         }
+        while (temp != head);
         return pets;
-
     }
 
     //Metodo de añadir al inicio
-    public void addToStart(Pet pet) throws ListDEException {
-        NodeDE newNode = new NodeDE(pet);
-        if (this.head != null) {
-            NodeDE temp = this.head;
-            while (temp.getNext() != head) {
-                if (temp.getData().getIdentificationPet().equals(pet.getIdentificationPet())) {
-                    throw new ListDEException("Ya existe una mascota con ese codigo");
-                }
-                temp = temp.getNext();
-            }
-            if (temp.getData().getIdentificationPet().equals(pet.getIdentificationPet())) {
-                throw new ListDEException("Ya existe una mascota con ese codigo");
-            }
-            newNode.setNext(this.head.getNext());
-            newNode.setPrevious(this.head);
-            this.head.getNext().setPrevious(newNode);
-            this.head.setNext(newNode);
-            this.head = newNode;
-        } else {
-            addToEnd(pet);
+    public void addToStart(Pet pet) {
+    NodeDE newPet = new NodeDE(pet);
+        if (this.head != null){
+        NodeDE temp = this.head;
+        while (temp.getNext() != this.head){
+            temp = temp.getNext();
         }
-        size++;
+        temp.setNext(newPet);
+        newPet.setPrevious(temp);
+        newPet.setNext(head);
+        head.setPrevious(newPet);
+        this.head=newPet;
     }
+        else{
+        newPet.setNext(newPet);
+        newPet.setPrevious(newPet);
+        this.head = newPet;
+    }
+    size++;
+}
 
 
 
     //Metodo de añadir al final
-    public void addToEnd(Pet pet) throws ListDEException {
-        if (this.head != null) {
+    public void addToEnd(Pet pet) {
+        NodeDE newPet = new NodeDE(pet);
+        if (this.head != null){
             NodeDE temp = this.head;
-            while (temp.getNext() != head) {
-                if (temp.getData().getIdentificationPet().equals(pet.getIdentificationPet())) {
-                    throw new ListDEException("Ya existe una mascota con ese codigo");
-                }
+            while (temp.getNext() != this.head){
                 temp = temp.getNext();
             }
-            if (temp.getData().getIdentificationPet().equals(pet.getIdentificationPet())) {
-                throw new ListDEException("Ya existe una mascota con ese codigo");
-            }
-
-            NodeDE newNode = new NodeDE(pet);
-            newNode.setPrevious(this.head.getPrevious());
-            this.head.getPrevious().setNext(newNode);
-            newNode.setNext(this.head);
-            this.head.setPrevious(newNode);
-        } else {
-            this.head = new NodeDE(pet);
-            this.head.setPrevious(head);
-            this.head.setNext(head);
+            temp.setNext(newPet);
+            newPet.setPrevious(temp);
+            newPet.setNext(this.head);
+            this.head.setPrevious(newPet);
+        }
+        else{
+            newPet.setNext(newPet);
+            newPet.setPrevious(newPet);
+            this.head=newPet;
         }
         size++;
     }
-
 
     //Metodo de insertar por posición
-    public void addByPosition(Pet pet, int position2) throws ListDEException {
-        NodeDE temp = head;
-        NodeDE newNode = new NodeDE(pet);
-        if (this.head == null) {
-            addToEnd(pet);
-            return;
-        }
-        if (position2 == 0) {
-            addToStart(pet);
-        }
-        if (position2 > 0) {
-            for (int i = 1; i < position2; i++) {
+    public void addByPosition (Pet pet, int position){
+     if (position < 0){
+        throw new IllegalArgumentException("ERROR");
+    }
+    NodeDE newPet = new NodeDE(pet);
+        if (this.head != null){
+        NodeDE temp = this.head;
+        if (position == 0) {
+            while (temp.getNext() != this.head){
                 temp = temp.getNext();
             }
-            newNode.setPrevious(temp);
-            newNode.setNext(temp.getNext());
-            temp.getNext().setPrevious(newNode);
-            temp.setNext(newNode);
-        } else if (position2 < 0) {
-            int position = position2 * (-1);
-            for (int i = 1; i < position2; i++) {
-                temp = temp.getPrevious();
-            }
-            newNode.setPrevious(temp.getPrevious());
-            newNode.setNext(temp);
-            temp.setPrevious(newNode);
-            temp.getPrevious().setNext(newNode);
+            temp.setNext(newPet);
+            newPet.setPrevious(temp);
+            newPet.setNext(head);
+            head.setPrevious(newPet);
+            this.head=newPet;
         }
-        size++;
-
-    }
-
-    //Metodo de bañar a la mascota
-    public void takeShower(char direction) throws ListDEException {
-        if (this.head != null) {
-            int val = (int) Math.floor(Math.random() * 1000);
-            NodeDE temp = this.head;
-            if (direction == 'i' || direction == 'I') {
-                for (int i = 0; i < val; i++) {
-                    temp = temp.getPrevious();
-                }
-                if (temp.getData().isBathed() == true) {
-                    throw new ListDEException( "La mascota ya está bañada");
-                } else {
-                    temp.getData().setBathed(true);
-                    return;
-                }
-            } else if (direction == 'd' || direction == 'D') {
-                for (int i = 0; i < val; i++) {
-                    temp = temp.getNext();
-                }
-                if (temp.getData().isBathed() == true) {
-                    throw new ListDEException( "La mascota ya está bañada");
-                } else {
-                    temp.getData().setBathed(true);
-                    return;
-                }
-            }else{
-                throw new ListDEException("Envió mal la variable de dirección");
+        else if (position >= size){
+            while (temp.getNext() != this.head){
+                temp = temp.getNext();
             }
+            temp.setNext(newPet);
+            newPet.setPrevious(temp);
+            newPet.setNext(this.head);
+            this.head.setPrevious(newPet);
         }
-        throw new ListDEException("La lista está vacía");
+        else{
+            for (int i = 0; i < position -1; i++){
+                temp = temp.getNext();
+            }
+            newPet.setNext(temp.getNext());
+            newPet.setPrevious(temp);
+            temp.getNext().setPrevious(newPet);
+            temp.setNext(newPet);
+        }
     }
+        else{
+        newPet.setNext(newPet);
+        newPet.setPrevious(newPet);
+        this.head = newPet;
+    }
+    size++;
 }
 
+
+    //Metodo de bañar a la mascota
+    public int takeShower (String direction) {
+        if (head == null) {
+            return -1;
+        }
+        int size = getSize();
+        Random random = new Random();
+        int randomPosition = random.nextInt(size) + 1;
+        NodeDE temp = head;
+        int cont = 1;
+        if (direction.compareTo("L") == 0) {
+            temp = head.getPrevious();
+        }
+        while (cont < randomPosition) {
+            if (direction.compareTo("R") == 0) {
+                temp = temp.getNext();
+            }
+            else if (direction.compareTo("L") == 0) {
+                temp = temp.getPrevious();
+            }
+            cont++;
+        }
+        if (direction.compareTo("L") == 0) {
+            temp = temp.getNext();
+        }
+        Pet pet = temp.getData();
+        if (!pet.isBathed()) {
+            pet.setBathed(true);
+            return randomPosition;
+        } else {
+            return 0;
+        }
+    }
+}

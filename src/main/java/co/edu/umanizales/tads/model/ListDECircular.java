@@ -136,8 +136,7 @@ public class ListDECircular {
         while (cont < randomPosition) {
             if (direction.compareTo("R") == 0) {
                 temp = temp.getNext();
-            }
-            else if (direction.compareTo("L") == 0) {
+            } else if (direction.compareTo("L") == 0) {
                 temp = temp.getPrevious();
             }
             cont++;

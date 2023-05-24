@@ -1,5 +1,6 @@
 package co.edu.umanizales.tads.model;
 
+import co.edu.umanizales.tads.controller.dto.ReportPetLocationGenderDTO;
 import co.edu.umanizales.tads.exception.ListDEException;
 import lombok.Data;
 import lombok.Getter;
@@ -24,13 +25,13 @@ public class ListDE {
         return headDE;
     }
 
-    public List <Pet> print(){
-       if (size == 0){
-           return null;
-       }
-        if (headDE != null){
+    public List<Pet> print() {
+        if (size == 0) {
+            return null;
+        }
+        if (headDE != null) {
             NodeDE temp = headDE;
-            while (temp != null){
+            while (temp != null) {
                 pets.add(temp.getData());
                 temp = temp.getNext();
             }
@@ -39,7 +40,7 @@ public class ListDE {
     }
 
 
-    public void addPet(Pet pet) throws ListDEException{
+    public void addPet(Pet pet) throws ListDEException {
         if (pet == null) {
             throw new ListDEException("La mascota no puede ser nulo");
         }
@@ -74,9 +75,9 @@ public class ListDE {
     }
 
     public void changeExtremes() throws ListDEException {
-        if(headDE!=null && headDE.getNext()!=null) {
+        if (headDE != null && headDE.getNext() != null) {
             NodeDE temp = headDE;
-            while(temp.getNext()!=null) {
+            while (temp.getNext() != null) {
                 temp = temp.getNext();
             }
             Pet headCopy = this.getHead().getData();
@@ -85,7 +86,21 @@ public class ListDE {
         }
     }
 
-    public void deletePetByIdentification(String identificationPet) throws ListDEException{
+    public Pet getPetById(String id) {
+        NodeDE temp = headDE;
+        if (headDE != null) {
+            while (temp != null) {
+                if(temp.getData().getIdentificationPet().equals(id)) {
+                    return temp.getData();
+                }
+                temp = temp.getNext();
+            }
+
+        }
+        return null;
+    }
+
+    public void deletePetByIdentification(String identificationPet) throws ListDEException {
         if (identificationPet != null) {
             NodeDE temp = headDE;
             while (temp != null) {
@@ -103,29 +118,42 @@ public class ListDE {
                 }
                 temp = temp.getNext();
             }
-        }else {
+        } else {
             throw new ListDEException("La identificacion no puede ser nulo");
         }
     }
 
-    public void addPetByPosition(Pet pet, int position) throws ListDEException{
-        if (position < 0 || position > size){
+    public int getPosbyId(String id) {
+        NodeDE temp = headDE;
+        int acumulate = 0;
+        if (headDE != null) {
+            while (temp != null && !temp.getData().getIdentificationPet().equals(id)) {
+                acumulate = acumulate + 1;
+                temp.getNext();
+                return acumulate;
+            }
+        }
+        return acumulate;
+    }
+
+    public void addPetByPosition(Pet pet, int position) throws ListDEException {
+        if (position < 0 || position > size) {
             throw new ListDEException("Invalid position: " + position);
         }
         NodeDE newNode = new NodeDE(pet);
-        if (position == 0){
+        if (position == 0) {
             newNode.setNext(headDE);
-            if (headDE != null){
+            if (headDE != null) {
                 headDE.setPrevious(newNode);
             }
             headDE = newNode;
-        }else {
+        } else {
             NodeDE current = headDE;
-            for (int i = 1; i < position -1; i++){
+            for (int i = 1; i < position - 1; i++) {
                 current = current.getNext();
             }
             newNode.setNext(current.getNext());
-            if (current.getNext() != null){
+            if (current.getNext() != null) {
                 current.getNext().setPrevious(newNode);
             }
             current.setNext(newNode);
@@ -285,50 +313,52 @@ public class ListDE {
 
     //Metodo 7
     //Método que me permita defirirle a una mascota determinado que adelante un número dado de posiciones
-    public void winPositionPet(String identificationPet, int position) throws ListDEException {
-        if (position < 0) {
-            throw new ListDEException("La posición debe ser un número positivo");
-        }
+    public void winPositionPet(String identificationPet, int win) throws ListDEException {
+        NodeDE temp = headDE;
+        ListDE listDECp = new ListDE();
+        int sum= 0;
         if (headDE != null) {
-            NodeDE temp = headDE;
-            int count = 1;
-            while (temp != null && !temp.getData().getIdentificationPet().equals(identificationPet)) {
-                temp = temp.getNext();
-                count++;
-            }
-            if (temp != null) {
-                int newPosition = count - position;
-                if (newPosition < 0) {
-                    throw new IndexOutOfBoundsException("La posición especificada está fuera de los límites de la lista");
-                }
-                Pet listCopy = temp.getData();
-                deletePetByIdentification(temp.getData().getIdentificationPet());
-                if (newPosition > 0) {
-                    addPetByPosition(listCopy, newPosition);
+            while (temp != null) {
+                if (!temp.getData().getIdentificationPet().equals(identificationPet)) {
+                    listDECp.addPet(temp.getData());
+                    temp = temp.getNext();
                 } else {
-                    addPetToStart(listCopy);
+                    temp = temp.getNext();
                 }
             }
+            if(win!=1) {
+                sum = win - getPosbyId(identificationPet);
+                listDECp.addPetByPosition(getPetById(identificationPet), sum);
+
+            }else {
+                listDECp.addToStart(getPetById(identificationPet));
+
+            }
+            this.headDE = listDECp.getHead();
         }
+
     }
+
 
     //Metodo 8
     //Método que me permita decirle a una mascota determinada que pierda un numero de posiciones dadas
-    public void losePositionPet (String identificationPet , int position) throws ListDEException {
-        if (position < 0) {
-            throw new ListDEException("La posicion no puede ser menor a cero");
-        }
-        NodeDE temp = headDE;
-        int count = 1;
-        while (temp != null && !temp.getData().getIdentificationPet().equals(identificationPet)) {
-            temp = temp.getNext();
-            count++;
-        }
+    public void losePositionPet(String identificationPet, int lose) throws ListDEException {
+        NodeDE temp = this.headDE;
+        int sum= 0;
+        ListDE listDECp = new ListDE();
+        if(headDE != null);
+        while(temp!= null){
+            if(!temp.getData().getIdentificationPet().equals(identificationPet)){
+                listDECp.addPet(temp.getData());
+                temp= temp.getNext();
+            }else {
+                temp = temp.getNext();
+            }
 
-        int sum = position + count;
-        Pet listCopy = temp.getData();
-        deletePetByIdentification(temp.getData().getIdentificationPet());
-        addPetByPosition(listCopy, sum);
+        }
+        sum = lose + getPosbyId(identificationPet);
+        listDECp.addPetByPosition(getPetById(identificationPet),sum);
+        this.headDE = listDECp.getHead();
     }
 
     //Metodo 9
@@ -351,7 +381,7 @@ public class ListDE {
 
     //Metodo 10
     //Implementar un método que me permita enviar al final de la lista a las mascotas que su nombre inicie con una letra dada
-    public void sendToFinalPetbyLetter (char letter) throws ListDEException {
+    public void sendToFinalPetbyLetter(char letter) throws ListDEException {
         if (this.headDE != null) {
             ListDE listCopy = new ListDE();
             NodeDE temp = this.headDE;
@@ -371,7 +401,6 @@ public class ListDE {
             throw new ListDEException("La lista no puede estar vacia");
         }
     }
-
 
 
     // Método de eliminar kamicase
@@ -394,8 +423,8 @@ public class ListDE {
             throw new ListDEException("La lista está vacia");
         }
         NodeDE temp = headDE;
-        NodeDE before , after;
-        if(this.headDE != null) {
+        NodeDE before, after;
+        if (this.headDE != null) {
             if (this.headDE.getData().getIdentificationPet().equals(identificationPet)) {
                 this.headDE = headDE.getNext();
                 if (headDE != null) {
@@ -406,7 +435,7 @@ public class ListDE {
                     temp = temp.getNext();
                 }
                 temp = temp.getNext();
-                if(temp.getNext() == null) {
+                if (temp.getNext() == null) {
                     before = temp.getPrevious();
                     before.setNext(null);
                 } else {
@@ -419,6 +448,15 @@ public class ListDE {
         }
     }
 
+    //Metodo de Informe de Hembras en Calor
+    public void getReportOnFireByLocation(ReportPetLocationGenderDTO report){
+        if (headDE != null) {
+            NodeDE temp = headDE;
+            while (temp != null) {
+                report.updateQuantity(temp.getData().getLocation().getName(), temp.getData().getGender(),
+                        temp.getData().isOnfire());
+                temp = temp.getNext();
+            }
+        }
+    }
 }
-
-

@@ -16,13 +16,16 @@ public class ReportPetLocationGenderDTO {
         }
     }
 
-    public void updateQuantity(String city,char gender){
+    public void updateQuantity(String city,char gender,boolean onFire){
         for(LocationGenderQuantityDTO loc:locationGenderQuantityDTOS){
             if(loc.getCity().equals(city)){
                 for(GenderQuantityDTO genderDTO: loc.getGenders()){
                     if(genderDTO.getGender()==gender){
                         genderDTO.setQuantity(genderDTO.getQuantity()+1);
                         loc.setTotal(loc.getTotal()+1);
+                        if(onFire){
+                            genderDTO.incrementOnFire();
+                        }
                         return;
                     }
                 }

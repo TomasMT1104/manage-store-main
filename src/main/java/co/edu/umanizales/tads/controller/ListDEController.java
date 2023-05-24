@@ -1,9 +1,6 @@
 package co.edu.umanizales.tads.controller;
 
-import co.edu.umanizales.tads.controller.dto.PetDTO;
-import co.edu.umanizales.tads.controller.dto.PetsByLocationDTO;
-import co.edu.umanizales.tads.controller.dto.RangeDTO;
-import co.edu.umanizales.tads.controller.dto.ResponseDTO;
+import co.edu.umanizales.tads.controller.dto.*;
 import co.edu.umanizales.tads.exception.ListDEException;
 import co.edu.umanizales.tads.model.Location;
 import co.edu.umanizales.tads.model.Pet;
@@ -18,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/listde")
@@ -30,15 +28,18 @@ public class ListDEController {
     private RangeService rangeService;
 
     @PostMapping
-    public ResponseEntity<ResponseDTO> addPet(@RequestBody PetDTO petDTO) throws ListDEException{
+    public ResponseEntity<ResponseDTO> addPet(@RequestBody PetDTO petDTO) throws ListDEException {
         try {
+            if(petDTO.getGender() == 'M' && petDTO.isOnfire()){
+                return new ResponseEntity<>(new ResponseDTO(406,"Los machos no pueden estar en calor",
+                        null), HttpStatus.OK);
+            }
             Location location = locationService.getLocationByCode(petDTO.getCodeLocation());
             if (location == null){
                 throw new ListDEException("La ubicación no existe");
             }
             Pet newPet = new Pet(petDTO.getIdentificationPet(), petDTO.getName(),
-                    petDTO.getAge(), petDTO.getPetType(), petDTO.getBreed(), location, petDTO.getGender(),false);
-
+                    petDTO.getAge(), petDTO.getPetType(), petDTO.getBreed(), location, petDTO.getGender(),petDTO.isOnfire(), false);
             listDEService.getPets().addPet(newPet);
             return new ResponseEntity<>(new ResponseDTO(
                     200, "Se ha adicionado a la mascota con éxito", null), HttpStatus.OK);
@@ -151,28 +152,21 @@ public class ListDEController {
         }
     }
 
-    @GetMapping(path = "/winpositionpet/{id}/{position}")
-    public ResponseEntity<ResponseDTO> winPositionPet(@PathVariable String identificationPet, @PathVariable int position) {
-        try {
-            listDEService.getPets().winPositionPet(identificationPet,position);
-            return new ResponseEntity<>(new ResponseDTO(200, "Accion realizada con exito, se ha podido adelantar la posicion de la mascota", null), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseDTO(500, "Se produjo un error al realizar la operacion", null), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @GetMapping(path = "/winpositionpet")
+    public ResponseEntity<ResponseDTO> winPositionPet(@RequestBody Map<String, Object> requestBody) throws ListDEException{
+        String identificationPet =(String) requestBody.get("id");
+        Integer win = (Integer) requestBody.get("win");
+        listDEService.getPets().winPositionPet(identificationPet,win);
+        return new ResponseEntity<>(new ResponseDTO(200,"Las posiciones se reordenaron",null),HttpStatus.OK);
     }
 
-    @GetMapping(path = "/losepositionpet/{identificaionPet}/{positionpet}")
-    public ResponseEntity<ResponseDTO>losePositionPet(String identificationPet, int positionpet){
-        try {
-            listDEService.getPets().losePositionPet(identificationPet,positionpet);
-            return new ResponseEntity<>(new ResponseDTO(
-                    200, "La mascota perdio posiciones en la lista", null),
-                    HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseDTO(
-                    500, "Se obtuvo un error al perder la mascota en la lista", null)
-                    , HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+    @GetMapping(path = "/losepositionpet")
+    public ResponseEntity<ResponseDTO> losePositionPet(@RequestBody Map<String, Object> requestBody) throws ListDEException{
+        String identificationPet =(String) requestBody.get("id");
+        Integer gain = (Integer) requestBody.get("lose");
+        listDEService.getPets().losePositionPet(identificationPet,gain);
+        return new ResponseEntity<>(new ResponseDTO(200,"Las posiciones se reordenaron",null),HttpStatus.OK);
     }
 
     @GetMapping(path = "/reportrangebyage")
@@ -210,7 +204,11 @@ public class ListDEController {
         }
     }
 
-
-
+    @GetMapping(path= "/reportspets")
+    public ResponseEntity<ResponseDTO> getReportsPetOnFire(){
+    ReportPetLocationGenderDTO report = new ReportPetLocationGenderDTO(locationService.getLocationsByCodeSize(8));
+        listDEService.getPets().getReportOnFireByLocation(report);
+        return new ResponseEntity(new ResponseDTO(200,report,null), HttpStatus.OK);
+    }
 
 }

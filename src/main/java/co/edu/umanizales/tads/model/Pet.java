@@ -13,6 +13,7 @@ public class Pet {
     private String breed;
     private Location location;
     private char gender;
+    private boolean onfire;
     private boolean bathed;
 
 }

@@ -8,5 +8,9 @@ import lombok.Data;
 public class GenderQuantityDTO {
     private char gender;
     private int quantity;
+    private int onfire;
+     public void incrementOnFire(){
+         onfire++;
+     }
 
 }

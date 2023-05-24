@@ -51,4 +51,14 @@ public class ListDECircularController {
         return new ResponseEntity<>(new ResponseDTO(200, "Una mascota aletaria ha sido bañada", null),
                 HttpStatus.OK);
     }
+
+    @GetMapping("/changehead")
+    public ResponseEntity<ResponseDTO> changeHead() {
+
+        int  random = listDECircularService.getPets().changeHead();
+        String identificationPet = listDECircularService.getPets().getHead().getData().getIdentificationPet();
+        return new ResponseEntity<>(new ResponseDTO(200, "El numero aleatorio es: " + random + "  La nueva cabeza es: "+ identificationPet
+                , null), HttpStatus.OK);
+    }
+
 }

@@ -152,4 +152,16 @@ public class ListDECircular {
             return 0;
         }
     }
+
+    //Metodo de cambiar la cabeza con un numero aleatorio
+    public int changeHead() {
+        Random rand = new Random();
+        int randomNum = rand.nextInt(size + 1);
+        NodeDE newHead = head;
+        for (int i = 0; i < randomNum; i++) {
+            newHead = newHead.getNext();
+        }
+        head = newHead;
+        return randomNum;
+    }
 }
